@@ -1,0 +1,8 @@
+export declare enum StockMovementReason {
+    RECEIVE = "RECEIVE",
+    WASTE = "WASTE",
+    SPOILAGE = "SPOILAGE",
+    ADJUSTMENT = "ADJUSTMENT",
+    SALE_CORRECTION = "SALE_CORRECTION",
+    SALE = "SALE"
+}

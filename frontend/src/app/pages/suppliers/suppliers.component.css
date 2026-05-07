@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  padding: 32px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Row hover effect */
+tr.mat-row:hover {
+  background: #f8fafc;
+  transition: background 0.15s ease;
+}
