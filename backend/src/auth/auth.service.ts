@@ -21,6 +21,7 @@ export class AuthService {
     const user = await this.userModel
       .findOne({ username: request.username })
       .exec();
+
     if (!user) {
       throw new UnauthorizedException('Invalid username or password');
     }
@@ -33,11 +34,15 @@ export class AuthService {
     const expiresMinutes = Number(
       this.configService.get('JWT_EXPIRES_MINUTES') ?? 120,
     );
+
     const payload = {
       sub: user.id,
       username: user.username,
-      roles: user.roles ?? [],
+
+      // ✅ RBAC SAFE (important)
+      roles: user.roles ?? [Role.STAFF],
     };
+
     const token = await this.jwtService.signAsync(payload, {
       expiresIn: `${expiresMinutes}m`,
     });
@@ -62,14 +67,18 @@ export class AuthService {
     password: string,
     roles: Role[],
   ): Promise<void> {
-    if (!username || !password) {
-      return;
-    }
+    if (!username || !password) return;
+
     const exists = await this.userModel.exists({ username });
-    if (exists) {
-      return;
-    }
+    if (exists) return;
+
     const passwordHash = await bcrypt.hash(password, 10);
-    await this.userModel.create({ username, passwordHash, roles });
+
+    // ✅ FIX IMPORTANT ICI
+    await this.userModel.create({
+      username,
+      passwordHash,
+      roles: roles && roles.length > 0 ? roles : [Role.STAFF],
+    });
   }
 }
